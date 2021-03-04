@@ -1,7 +1,8 @@
 const webpack = require('webpack');
 const path = require('path');
 const utils = require('./utils');
-
+const TerserPlugin = require("terser-webpack-plugin");
+const VueLoaderPlugin = require('vue-loader/lib/plugin');
 function resolve(dir) {
   return path.join(__dirname, '..', dir)
 }
@@ -40,18 +41,24 @@ module.exports = {
       }
     ]
   },
+  mode:"development",
   plugins: [
-    new webpack.DefinePlugin({
-      'process.env.NODE_ENV': '"production"'
-    }),
+    new VueLoaderPlugin()
+    // new webpack.DefinePlugin({
+    //   'process.env.NODE_ENV': '"production"'
+    // })
     // UglifyJs do not support ES6+, you can also use babel-minify for better treeshaking: https://github.com/babel/minify
-    new webpack.optimize.UglifyJsPlugin({
-      minimize : true,
-      sourceMap : false,
-      mangle: true,
-      compress: {
-        warnings: false
-      }
-    })
-  ]
+    // new webpack.optimize.UglifyJsPlugin({
+    //   minimize : true,
+    //   sourceMap : false,
+    //   mangle: true,
+    //   compress: {
+    //     warnings: false
+    //   }
+    // })
+  ],
+  optimization: {
+    minimize: true,
+    minimizer: [new TerserPlugin()],
+  },
 };

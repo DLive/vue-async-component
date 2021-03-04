@@ -2,6 +2,8 @@ const webpack = require('webpack');
 const path = require('path');
 const utils = require('./utils');
 const OptimizeCSSPlugin = require('optimize-css-assets-webpack-plugin')
+const TerserPlugin = require("terser-webpack-plugin");
+const VueLoaderPlugin = require('vue-loader/lib/plugin');
 
 function resolve(dir) {
   return path.join(__dirname, '..', dir)
@@ -77,21 +79,27 @@ module.exports = {
       }
     ]
   },
+  mode:"production",
   plugins: [
-    new webpack.DefinePlugin({
-      'process.env.NODE_ENV': '"production"'
-    }),
+    // new webpack.DefinePlugin({
+    //   'process.env.NODE_ENV': '"production"'
+    // }),
     // UglifyJs do not support ES6+, you can also use babel-minify for better treeshaking: https://github.com/babel/minify
-    new webpack.optimize.UglifyJsPlugin({
-      compress: false,
-      sourceMap: true
-    }),
+    // new webpack.optimize.UglifyJsPlugin({
+    //   compress: false,
+    //   sourceMap: true
+    // }),
     // Compress extracted CSS. We are using this plugin so that possible
     // duplicated CSS from different components can be deduped.
     new OptimizeCSSPlugin({
       cssProcessorOptions: {
         safe: true
       }
-    })
-  ]
+    }),
+    new VueLoaderPlugin()
+  ],
+  optimization: {
+    minimize: true,
+    minimizer: [new TerserPlugin()],
+  },
 };
